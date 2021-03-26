@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/organization">Organization</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto"></ul>
+                <span class="navbar-text">
+                    Hi, {{this_user.first_name}} {{this_user.last_name}}</a> <a href="/logout" role="button"
+                        class="btn btn-sm btn-info ml-2 text-white">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="wrapper">
+        <div class="content">
+            <h3>Here are the organizations you may join:</h3>
+            {% for organization in all_organizations  %}
+            <div class="container">
+                <h5><a href="/organization/{{organization.id}}">{{organization.name}}</a></h5>
+                <h5>Memebers: {{ organization.favorited_by.count }}</h5>
+                <h6>{{organization.description}}</h6>
+                <p>(added by {{organization.creator.first_name}} {{organization.creator.last_name}})</p>
+                {% if organization.creator.id == this_user.id %}
+                <form action="/organization/{{organization.id}}/delete" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form> 
+                {% endif %}                    
+            </div>
+            {% endfor %}
+        </div>
+        <div class="content">
+            <div class="col-6 px-2">
+                <h3>Create a new organization:</h3>
+                
+                <form action="/organization/create" method="post">
+                    {% csrf_token %}
+                    {% for message in messages %}
+                        <p class="text-danger small">{{ message }}</p>
+                    {% endfor %}
+                    <div class="form-group">
+                        <label for="name">Title</label>
+                        <input type="text" class="form-control" name="name">
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" class="form-control2" name="description">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            
+        </div>
+    </div><!-- /MAIN CONTENT -->
+</body>
+
+</html>
